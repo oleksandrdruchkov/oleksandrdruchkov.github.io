@@ -152,12 +152,9 @@
 <section>
   <div class="wrap">
     <h2>Пошук вакансій</h2>
-    <p class="sub">Пошук по всій Ірландії українською. Скоро тут з'явиться.</p>
-    <div class="search">
-      <input type="text" placeholder="Наприклад: склад, Дублін" disabled>
-      <button class="btn" disabled style="opacity:.5;cursor:default">Шукати</button>
-    </div>
-    <p class="soon">Пошук працюватиме на базі агрегатора вакансій. Поки що добірка надходить на email.</p>
+    <p class="sub">Шукайте серед усіх вакансій в Ірландії: введіть посаду або ключові слова (англійською, наприклад <em>warehouse</em>, <em>cleaner</em>, <em>care assistant</em>) і місто.</p>
+    <div class="cj-search-box" data-url="https://widget.careerjet.net/search-box/e0cbcda6c79d5604cc1bdcdc6a2f796d"></div>
+    <p class="soon">Пошук надає <a href="https://www.careerjet.ie" target="_blank" rel="noopener">Careerjet</a>. Результати відкриваються на сайті Careerjet.</p>
   </div>
 </section>
 
@@ -329,6 +326,9 @@
       .catch(() => { $('digestStatus').textContent = 'Не вдалося завантажити добірку. Спробуйте оновити сторінку пізніше.'; });
     ['fCategory', 'fCounty', 'fEnglish'].forEach(id => $(id).addEventListener('change', render));
   })();
+</script>
+<script>
+(function(d){var js=d.createElement('script');js.id='cj-search-box';js.async=true;js.src='https://static.careerjet.org/js/all_widget_search_box_3rd_party.min.js?t='+Date.now();d.body.appendChild(js);})(document);
 </script>
 </body>
 </html>
