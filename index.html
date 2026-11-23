@@ -61,6 +61,10 @@
   .badge.g{background:var(--green-soft);color:var(--green)}
   .job .go{display:inline-block;margin-top:12px;font-weight:600;font-size:14px}
   #digestStatus{color:var(--muted)}
+  html{scrollbar-gutter:stable}
+  /* JobBox Careerjet: фіксована висота, щоб зміни віджета не рухали сторінку */
+  #cjJobBoxWrap{height:620px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;contain:layout paint;
+    background:#fff;border:1px solid var(--line);border-radius:14px;padding:8px 16px}
 </style>
 </head>
 <body>
@@ -332,9 +336,12 @@
     // --- Careerjet JobBox, синхронізований із фільтрами категорії та графства
     const CJ_SEARCH = {warehouse:'warehouse',kitchen:'kitchen',cleaning:'cleaner',hairdresser:'hairdresser',care:'care assistant',
       construction:'general operative',driver:'driver',admin:'administrator',it:'it support',retail:'retail assistant',other:''};
-    let cjTimer = null;
+    let cjTimer = null, cjLast = null;
     function loadJobBox() {
       const c = $('fCategory').value, k = $('fCounty').value;
+      const key = c + '|' + k;
+      if (key === cjLast) return;   // ті самі параметри — не перезавантажуємо
+      cjLast = key;
       const wrap = $('cjJobBoxWrap'); wrap.replaceChildren();
       const box = el('div', 'cj-job-box');
       box.setAttribute('data-url', 'https://widget.careerjet.net/job-box/a1f692f00af4418c0b57c0cfc744c269');
