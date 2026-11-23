@@ -75,7 +75,7 @@
     <div class="tags">
       <span class="tag">Склад і логістика</span><span class="tag">Кухня та кейтеринг</span>
       <span class="tag">Адміністрування</span><span class="tag">Водії та кур'єри</span>
-      <span class="tag">Прибирання</span><span class="tag">IT-підтримка</span>
+      <span class="tag">Прибирання</span><span class="tag">Перукарні та б'юті</span><span class="tag">IT-підтримка</span>
     </div>
   </div>
 </div>
@@ -100,6 +100,7 @@
       <div class="card"><h3>Kitchen Porter / Kitchen Assistant</h3><p>Ресторани, готелі, кейтеринг. Часто беруть без досвіду.</p><span class="eng">Англійська: базова</span></div>
       <div class="card"><h3>Warehouse Operative</h3><p>Склади й логістичні центри навколо Дубліна, змінний графік.</p><span class="eng">Англійська: базова</span></div>
       <div class="card"><h3>Delivery Driver</h3><p>Кур'єрські служби. Потрібні ірландські водійські права.</p><span class="eng">Англійська: середня</span></div>
+      <div class="card"><h3>Hairdresser / Barber</h3><p>Перукарні, барбершопи, салони краси. Цінується досвід і портфоліо робіт.</p><span class="eng">Англійська: базова–середня</span></div>
       <div class="card"><h3>Office / Data Entry</h3><p>Адміністративна робота, введення даних, ресепшн.</p><span class="eng">Англійська: середня+</span></div>
     </div>
   </div>
@@ -122,8 +123,8 @@
     <div class="card" style="padding:32px">
       <h2>Отримувати щотижневу добірку</h2>
       <p class="sub">Безкоштовно. Ваші відповіді допоможуть нам зрозуміти, які вакансії шукати насамперед.</p>
-      <!-- ЗАМІНІТЬ FORM_ENDPOINT на адресу форми з formspree.io (безкоштовно) -->
-      <form id="subForm" action="FORM_ENDPOINT" method="POST">
+      <form id="subForm" action="https://formspree.io/f/xoedplwp" method="POST">
+        <input type="hidden" name="_subject" value="Нова підписка — UA Jobs Ireland">
         <div class="row">
           <div><label for="email">Email</label><input id="email" type="email" name="email" required placeholder="you@example.com"></div>
           <div><label for="county">Де шукаєте роботу</label>
@@ -142,6 +143,7 @@
           <label><input type="checkbox" name="interest" value="admin"> Адміністрування / офіс</label>
           <label><input type="checkbox" name="interest" value="driver"> Водій / кур'єр</label>
           <label><input type="checkbox" name="interest" value="cleaning"> Прибирання</label>
+          <label><input type="checkbox" name="interest" value="hairdresser"> Перукар / барбер / б'юті</label>
           <label><input type="checkbox" name="interest" value="care"> Догляд (care assistant)</label>
           <label><input type="checkbox" name="interest" value="construction"> Будівництво</label>
           <label><input type="checkbox" name="interest" value="it"> IT / IT-підтримка</label>
@@ -169,7 +171,7 @@
 <section id="about-en" class="en">
   <div class="wrap">
     <h2>About (English)</h2>
-    <p>UA Jobs Ireland is a non-commercial project that helps Ukrainians living in Ireland, including people under EU temporary protection, find work. We send a weekly email digest of entry-level and mid-level vacancies (warehouse, catering, admin, driving, cleaning, care, IT support) across Dublin and the rest of Ireland. Each vacancy is marked with the level of English it requires.</p>
+    <p>UA Jobs Ireland is a non-commercial project that helps Ukrainians living in Ireland, including people under EU temporary protection, find work. We send a weekly email digest of entry-level and mid-level vacancies (warehouse, catering, admin, driving, cleaning, hairdressing and beauty, care, IT support) across Dublin and the rest of Ireland. Each vacancy is marked with the level of English it requires.</p>
     <p>Vacancies are collected and pre-screened by our open-source assistant <a href="https://github.com/oleksandrdruchkov/job-hunter-ai" target="_blank" rel="noopener">Job Hunter AI</a>. Every listing links back to its original source, and users apply directly with the employer or job board. An on-site job search for Ireland, translated into Ukrainian, is in development.</p>
   </div>
 </section>
@@ -185,15 +187,19 @@
   const msg = document.getElementById('formMsg');
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    if (form.action.includes('FORM_ENDPOINT')) {
-      msg.textContent = 'Форма ще не підключена. Зовсім скоро запрацює!';
-      return;
-    }
+    const btn = form.querySelector('button[type=submit]');
+    const data = new FormData(form);
+    // усі позначені категорії — в одне поле через кому
+    const interests = data.getAll('interest');
+    data.delete('interest');
+    data.append('interest', interests.length ? interests.join(', ') : 'не вказано');
+    btn.disabled = true; msg.style.color = ''; msg.textContent = 'Надсилаємо…';
     try {
-      const res = await fetch(form.action, {method:'POST', body:new FormData(form), headers:{'Accept':'application/json'}});
+      const res = await fetch(form.action, {method:'POST', body:data, headers:{'Accept':'application/json'}});
       if (res.ok) { form.reset(); msg.style.color='#1d7a46'; msg.textContent = 'Дякуємо! Першу добірку ви отримаєте найближчим часом.'; }
       else { msg.style.color='#b42318'; msg.textContent = 'Щось пішло не так. Спробуйте пізніше.'; }
     } catch (err) { msg.style.color='#b42318'; msg.textContent = 'Немає з\'єднання. Спробуйте пізніше.'; }
+    btn.disabled = false;
   });
 </script>
 </body>
