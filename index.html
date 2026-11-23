@@ -61,9 +61,9 @@
   .badge.g{background:var(--green-soft);color:var(--green)}
   .job .go{display:inline-block;margin-top:12px;font-weight:600;font-size:14px}
   #digestStatus{color:var(--muted)}
-  html{scrollbar-gutter:stable}
+  html{overflow-y:scroll;scrollbar-gutter:stable}
   /* JobBox Careerjet: фіксована висота, щоб зміни віджета не рухали сторінку */
-  #cjJobBoxWrap{height:620px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;contain:layout paint;
+  #cjJobBoxWrap{height:620px;overflow-y:scroll;scrollbar-gutter:stable;overflow-x:hidden;overscroll-behavior:contain;contain:layout paint;
     background:#fff;border:1px solid var(--line);border-radius:14px;padding:8px 16px}
 </style>
 </head>
