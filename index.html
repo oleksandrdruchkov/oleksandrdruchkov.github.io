@@ -61,7 +61,15 @@
   .badge.g{background:var(--green-soft);color:var(--green)}
   .job .go{display:inline-block;margin-top:12px;font-weight:600;font-size:14px}
   #digestStatus{color:var(--muted)}
-  html{overflow-y:scroll;scrollbar-gutter:stable}
+  html{overflow-y:scroll;scrollbar-gutter:stable;scroll-behavior:smooth}
+  [id]{scroll-margin-top:12px}
+  .searchcard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 6px 24px rgba(20,33,61,.06);max-width:860px}
+  .hint{font-size:14px;color:var(--muted);margin:12px 0 0}
+  .hero-sub{margin:18px 0 0;font-weight:600}
+  .formcard{padding:32px}
+  .steps{margin:0 0 24px;padding-left:20px;color:var(--muted)}
+  .steps li{margin-bottom:6px}
+  .steps b{color:var(--ink)}
   .hero-actions{display:flex;flex-wrap:wrap;gap:10px}
   .hero-actions .btn.ghost{margin-left:0}
   /* Телефони */
@@ -76,7 +84,8 @@
     h2{font-size:24px}
     .filters{flex-direction:column}
     .filters select{width:100%;min-width:0}
-    #subscribe .card{padding:20px!important}
+    .formcard{padding:20px}
+    .searchcard{padding:14px}
     .grid{grid-template-columns:1fr}
   }
 </style>
@@ -85,36 +94,32 @@
 
 <header>
   <div class="wrap nav">
-    <a class="brand" href="#"><span class="flag" aria-hidden="true"></span>UA Jobs Ireland</a>
+    <a class="brand" href="#top"><span class="flag" aria-hidden="true"></span>UA Jobs Ireland</a>
     <nav>
-      <a class="link" href="#digest">Добірка</a>
-      <a class="link" href="#how">Як це працює</a>
-      <a class="link" href="#subscribe">Підписатися</a>
+      <a class="link" href="#top">Пошук</a>
+      <a class="link" href="#digest" id="navDigest" hidden>Добірка</a>
+      <a class="link" href="#subscribe">Підписка</a>
       <a class="link" href="#about-en">About (EN)</a>
     </nav>
   </div>
 </header>
 
-<div class="hero">
+<div class="hero" id="top">
   <div class="wrap">
-    <h1>Вакансії в Ірландії, відібрані для українців</h1>
-    <p class="lead">Раз на тиждень ми надсилаємо добірку свіжих вакансій у Дубліні та по всій Ірландії. Біля кожної вакансії стоїть позначка, який рівень англійської для неї потрібен. Це для тих, хто тільки починає і хоче знайти першу або кращу роботу.</p>
-    <div class="hero-actions">
-      <a class="btn" href="#subscribe">Отримувати добірку</a>
-      <a class="btn ghost" href="#digest">Переглянути вакансії</a>
+    <h1>Вакансії в Ірландії</h1>
+    <p class="lead">Робота в Дубліні та по всій Ірландії: пошук серед усіх вакансій країни і добірка на email з позначкою, який рівень англійської потрібен.</p>
+    <div class="searchcard">
+      <div class="cj-search-box" data-url="https://widget.careerjet.net/search-box/e0cbcda6c79d5604cc1bdcdc6a2f796d"></div>
+      <p class="hint">Вводьте посаду англійською, наприклад <em>warehouse</em>, <em>kitchen porter</em>, <em>cleaner</em>, <em>care assistant</em>, і місто. Результати відкриються на сайті <a href="https://www.careerjet.ie" target="_blank" rel="noopener">Careerjet</a>.</p>
     </div>
-    <div class="tags">
-      <span class="tag">Склад і логістика</span><span class="tag">Кухня та кейтеринг</span>
-      <span class="tag">Адміністрування</span><span class="tag">Водії та кур'єри</span>
-      <span class="tag">Прибирання</span><span class="tag">Перукарні та б'юті</span><span class="tag">IT-підтримка</span>
-    </div>
+    <p class="hero-sub"><a href="#subscribe">Хочете отримувати підібрані вакансії на email? Підпишіться →</a></p>
   </div>
 </div>
 
-<section id="digest">
+<section id="digest" hidden>
   <div class="wrap">
-    <h2>Добірка вакансій</h2>
-    <p class="sub">Свіжі вакансії по Ірландії, які щодня відбирає наш асистент. Біля кожної є позначка, який рівень англійської для неї потрібен. Відгукуйтесь на оригінальному сайті оголошення.</p>
+    <h2>Добірка тижня</h2>
+    <p class="sub">Вакансії, які перевіряє наш асистент. Біля кожної позначено, який рівень англійської потрібен. Відгукуйтесь на сайті оголошення.</p>
     <div class="filters">
       <select id="fCategory" aria-label="Категорія">
         <option value="">Усі категорії</option>
@@ -140,56 +145,24 @@
     </div>
     <p id="digestStatus">Завантажуємо вакансії…</p>
     <div class="grid" id="digestList"></div>
-
-    <p class="soon" style="margin-top:20px">Не знайшли потрібного? <a href="#search">Шукайте серед усіх вакансій Ірландії →</a></p>
-  </div>
-</section>
-
-<section id="how">
-  <div class="wrap">
-    <h2>Як це працює</h2>
-    <p class="sub">Вакансії збирає та попередньо оцінює наш open-source асистент Job Hunter AI.</p>
-    <div class="grid">
-      <div class="card"><div class="num">1</div><h3>Збираємо</h3><p>Беремо вакансії з відкритих джерел: пошукових систем вакансій, дошок оголошень і сайтів роботодавців.</p></div>
-      <div class="card"><div class="num">2</div><h3>Фільтруємо</h3><p>Прибираємо дублікати та відверто невідповідні пропозиції. Позначаємо потрібний рівень англійської та досвіду.</p></div>
-      <div class="card"><div class="num">3</div><h3>Надсилаємо</h3><p>Ви отримуєте коротку добірку з посиланнями на оригінальні оголошення. Відгукуєтесь напряму в роботодавця.</p></div>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <h2>Приклади ролей, з якими ми працюємо</h2>
-    <p class="sub">Найчастіші запити від українців, які нещодавно приїхали.</p>
-    <div class="grid">
-      <div class="card"><h3>Kitchen Porter / Kitchen Assistant</h3><p>Ресторани, готелі, кейтеринг. Часто беруть без досвіду.</p><span class="eng">Англійська: базова</span></div>
-      <div class="card"><h3>Warehouse Operative</h3><p>Склади й логістичні центри навколо Дубліна, змінний графік.</p><span class="eng">Англійська: базова</span></div>
-      <div class="card"><h3>Delivery Driver</h3><p>Кур'єрські служби. Потрібні ірландські водійські права.</p><span class="eng">Англійська: середня</span></div>
-      <div class="card"><h3>Hairdresser / Barber</h3><p>Перукарні, барбершопи, салони краси. Цінується досвід і портфоліо робіт.</p><span class="eng">Англійська: базова–середня</span></div>
-      <div class="card"><h3>Office / Data Entry</h3><p>Адміністративна робота, введення даних, ресепшн.</p><span class="eng">Англійська: середня+</span></div>
-    </div>
-  </div>
-</section>
-
-<section id="search">
-  <div class="wrap">
-    <h2>Пошук вакансій</h2>
-    <p class="sub">Шукайте серед усіх вакансій в Ірландії: введіть посаду або ключові слова (англійською, наприклад <em>warehouse</em>, <em>cleaner</em>, <em>care assistant</em>) і місто.</p>
-    <div class="cj-search-box" data-url="https://widget.careerjet.net/search-box/e0cbcda6c79d5604cc1bdcdc6a2f796d"></div>
-    <p class="soon">Пошук надає <a href="https://www.careerjet.ie" target="_blank" rel="noopener">Careerjet</a>. Результати відкриваються на сайті Careerjet.</p>
   </div>
 </section>
 
 <section id="subscribe">
   <div class="wrap">
-    <div class="card" style="padding:32px">
-      <h2>Отримувати щотижневу добірку</h2>
-      <p class="sub">Безкоштовно. Ваші відповіді допоможуть нам зрозуміти, які вакансії шукати насамперед.</p>
+    <div class="card formcard">
+      <h2>Добірка вакансій на email</h2>
+      <p class="sub">Вкажіть, яку роботу шукаєте, і ми надсилатимемо вакансії саме за вашим запитом. Безкоштовно, відписатися можна будь-коли.</p>
+      <ol class="steps">
+        <li><b>Ви обираєте</b> місто, рівень англійської та напрямки роботи.</li>
+        <li><b>Асистент відбирає</b> свіжі вакансії, прибирає дублікати й сумнівні оголошення.</li>
+        <li><b>Ви отримуєте лист</b> з посиланнями на оригінальні оголошення і відгукуєтесь напряму.</li>
+      </ol>
       <form id="subForm" novalidate>
         <!-- пастка для ботів: людина це поле не бачить -->
         <div style="position:absolute;left:-9999px" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
         <div class="row">
-          <div><label for="email">Email</label><input id="email" type="email" name="email" required placeholder="you@example.com"></div>
+          <div><label for="email">Email</label><input id="email" type="email" name="email" required placeholder="you@example.com" autocomplete="email"></div>
           <div><label for="county">Де шукаєте роботу</label>
             <select id="county" name="county">
               <option>Дублін</option><option>Корк</option><option>Голвей</option><option>Лімерик</option><option>Інше графство</option><option>Будь-де в Ірландії</option>
@@ -203,17 +176,18 @@
         <div class="checks">
           <label><input type="checkbox" name="interest" value="warehouse"> Склад і логістика</label>
           <label><input type="checkbox" name="interest" value="kitchen"> Кухня та кейтеринг</label>
-          <label><input type="checkbox" name="interest" value="admin"> Адміністрування / офіс</label>
-          <label><input type="checkbox" name="interest" value="driver"> Водій / кур'єр</label>
           <label><input type="checkbox" name="interest" value="cleaning"> Прибирання</label>
-          <label><input type="checkbox" name="interest" value="hairdresser"> Перукар / барбер / б'юті</label>
           <label><input type="checkbox" name="interest" value="care"> Догляд (care assistant)</label>
+          <label><input type="checkbox" name="interest" value="hairdresser"> Перукар / барбер / б'юті</label>
           <label><input type="checkbox" name="interest" value="construction"> Будівництво</label>
+          <label><input type="checkbox" name="interest" value="driver"> Водій / кур'єр</label>
+          <label><input type="checkbox" name="interest" value="admin"> Адміністрування / офіс</label>
+          <label><input type="checkbox" name="interest" value="retail"> Магазини</label>
           <label><input type="checkbox" name="interest" value="it"> IT / IT-підтримка</label>
         </div>
         <label class="consent" style="display:flex;gap:8px;align-items:flex-start;font-weight:400">
           <input type="checkbox" name="consent" required style="margin-top:3px">
-          <span>Я погоджуюсь отримувати щотижневу добірку вакансій на цей email. Ми використовуємо ваші дані лише для підбору й розсилки вакансій і нікому їх не передаємо. Відписатися можна будь-коли за посиланням у кожному листі.</span>
+          <span>Я погоджуюсь отримувати добірку вакансій на цей email. Ми використовуємо ваші дані лише для підбору й розсилки вакансій і нікому їх не передаємо. Відписатися можна будь-коли за посиланням у кожному листі.</span>
         </label>
         <button class="btn" type="submit">Підписатися</button>
         <div id="formMsg" role="status"></div>
@@ -225,7 +199,6 @@
 <section>
   <div class="wrap">
     <h2>Корисні посилання</h2>
-    <p class="sub">Офіційні та перевірені джерела.</p>
     <ul class="links">
       <li><a href="https://www.citizensinformation.ie" target="_blank" rel="noopener">Citizens Information</a>: права, робота, податки, соціальна допомога в Ірландії (є інформація для осіб під тимчасовим захистом).</li>
       <li><a href="https://www.gov.ie" target="_blank" rel="noopener">gov.ie</a>: державні послуги, зокрема Intreo (державна служба зайнятості).</li>
@@ -237,8 +210,8 @@
 <section id="about-en" class="en">
   <div class="wrap">
     <h2>About (English)</h2>
-    <p>UA Jobs Ireland is a non-commercial project that helps Ukrainians living in Ireland, including people under EU temporary protection, find work. We send a weekly email digest of entry-level and mid-level vacancies (warehouse, catering, admin, driving, cleaning, hairdressing and beauty, care, IT support) across Dublin and the rest of Ireland. Each vacancy is marked with the level of English it requires.</p>
-    <p>Vacancies are collected and pre-screened by our open-source assistant <a href="https://github.com/oleksandrdruchkov/oleksandrdruchkov.github.io#readme" target="_blank" rel="noopener">Job Hunter AI</a>. A daily list of vacancies is shown on this page with filters by category, county and required English level; every listing links back to its original source, and users apply directly with the employer or job board. The site also offers a search across all vacancies in Ireland, powered by Careerjet.</p>
+    <p>UA Jobs Ireland is a non-commercial project that helps Ukrainians living in Ireland, including people under EU temporary protection, find work. Visitors can search all vacancies in Ireland (powered by Careerjet) and subscribe to an email digest of entry-level and mid-level vacancies (warehouse, catering, cleaning, care, hairdressing and beauty, construction, driving, admin, retail, IT support), matched to their county, English level and interests.</p>
+    <p>Vacancies for the digest are collected and pre-screened by our open-source assistant <a href="https://github.com/oleksandrdruchkov/oleksandrdruchkov.github.io#readme" target="_blank" rel="noopener">Job Hunter AI</a>, which marks the level of English each job requires. Every listing links back to its original source, and users apply directly with the employer or job board.</p>
   </div>
 </section>
 
@@ -257,13 +230,14 @@
   const form = document.getElementById('subForm');
   const msg = document.getElementById('formMsg');
   const show = (text, color) => { msg.style.color = color || ''; msg.textContent = text; };
+  const THANKS = 'Дякуємо, ви підписані! Перша добірка прийде на ваш email, щойно буде готова. А поки що скористайтеся пошуком угорі сторінки.';
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = form.querySelector('button[type=submit]');
     const data = new FormData(form);
 
-    if (data.get('website')) { form.reset(); show('Дякуємо! Першу добірку ви отримаєте найближчим часом.', '#1d7a46'); return; }
+    if (data.get('website')) { form.reset(); show(THANKS, '#1d7a46'); return; }
 
     const email = (data.get('email') || '').trim();
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { show('Перевірте, будь ласка, email.', '#b42318'); return; }
@@ -284,7 +258,7 @@
         headers: { 'apikey': SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
         body: JSON.stringify(payload)
       });
-      if (res.ok) { form.reset(); show('Дякуємо! Першу добірку ви отримаєте найближчим часом.', '#1d7a46'); }
+      if (res.ok) { form.reset(); show(THANKS, '#1d7a46'); }
       else if (res.status === 409) { show('Цей email уже підписаний. Добірка надходитиме як і раніше.', '#1d7a46'); }
       else { show('Щось пішло не так. Спробуйте пізніше.', '#b42318'); console.error('Supabase', res.status, await res.text()); }
     } catch (err) { show('Немає з\'єднання. Спробуйте пізніше.', '#b42318'); }
@@ -341,12 +315,14 @@
       .then(r => r.ok ? r.json() : Promise.reject(r.status))
       .then(data => {
         jobs = (Array.isArray(data) ? data : []).filter(j => safeUrl(j.url));
+        if (!jobs.length) return;   // поки добірка порожня — розділ не показуємо
+        $('digest').hidden = false; $('navDigest').hidden = false;
         const BASE = ['Dublin','Cork','Galway','Limerick','Waterford','Kildare','Meath','Wicklow','Louth','Wexford','Kilkenny','Kerry','Clare','Tipperary','Westmeath','Sligo','Donegal','Mayo'];
         const counties = [...new Set(BASE.concat(jobs.map(j => j.county).filter(Boolean)))].sort((a, b) => a === 'Dublin' ? -1 : b === 'Dublin' ? 1 : a.localeCompare(b));
         for (const c of counties) { const o = el('option', null, c); o.value = c; $('fCounty').append(o); }
         render();
       })
-      .catch(() => { $('digestStatus').textContent = 'Не вдалося завантажити добірку. Спробуйте оновити сторінку пізніше.'; });
+      .catch(() => { /* добірка недоступна — розділ лишається прихованим */ });
     ['fCategory', 'fCounty', 'fEnglish'].forEach(id => $(id).addEventListener('change', render));
   })();
 </script>
