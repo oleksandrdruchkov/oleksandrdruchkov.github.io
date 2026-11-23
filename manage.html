@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>Налаштування підписки — UA Jobs Ireland</title>
+<style>
+  :root{
+    --ink:#14213d; --muted:#5b6478; --line:#e3e7ef; --bg:#f7f8fb; --card:#fff;
+    --blue:#0b57b7; --blue-soft:#e8f0fc; --yellow:#ffd23f; --green:#1d7a46; --green-soft:#e6f4ec; --red:#b42318;
+  }
+  *{box-sizing:border-box}
+  html{overflow-y:scroll;scrollbar-gutter:stable}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.55}
+  a{color:var(--blue)}
+  .wrap{max-width:760px;margin:0 auto;padding:0 20px}
+  header{background:#fff;border-bottom:1px solid var(--line)}
+  .nav{display:flex;align-items:center;height:64px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;text-decoration:none;color:var(--ink)}
+  .flag{width:26px;height:18px;border-radius:3px;background:linear-gradient(var(--blue) 50%,var(--yellow) 50%)}
+  main{padding:36px 0 48px}
+  h1{font-size:28px;margin:0 0 6px}
+  .sub{color:var(--muted);margin:0 0 24px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px}
+  label{font-weight:600;font-size:14px;display:block;margin-bottom:6px}
+  select{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;font-size:16px;background:#fff}
+  .row{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-bottom:18px}
+  .checks{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin:6px 0 22px}
+  .checks label{font-weight:400;display:flex;gap:8px;align-items:center;margin:0}
+  .btn{display:inline-block;background:var(--blue);color:#fff;text-decoration:none;padding:13px 22px;border-radius:10px;font-weight:600;border:0;font-size:16px;cursor:pointer}
+  .btn:hover{background:#08458f}
+  .btn[disabled]{opacity:.6;cursor:default}
+  .btn.ghost{background:transparent;color:var(--blue);border:1.5px solid var(--blue)}
+  .btn.danger{background:transparent;color:var(--red);border:1.5px solid var(--red)}
+  .actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+  .pill{display:inline-block;font-size:13px;font-weight:600;padding:4px 10px;border-radius:999px}
+  .pill.on{background:var(--green-soft);color:var(--green)}
+  .pill.off{background:#fdecea;color:var(--red)}
+  #msg{margin-top:16px;font-weight:600;min-height:1.5em}
+  .muted{color:var(--muted);font-size:14px}
+  .danger-zone{margin-top:28px;padding-top:20px;border-top:1px solid var(--line)}
+  @media (max-width:640px){ .card{padding:20px} h1{font-size:24px} .actions .btn{flex:1 1 100%;text-align:center} }
+</style>
+</head>
+<body>
+<header><div class="wrap nav"><a class="brand" href="./"><span class="flag" aria-hidden="true"></span>UA Jobs Ireland</a></div></header>
+
+<main>
+  <div class="wrap">
+    <h1>Налаштування підписки</h1>
+    <p class="sub" id="who">Завантажуємо ваші налаштування…</p>
+
+    <div class="card" id="panel" hidden>
+      <p style="margin:0 0 18px">Статус: <span class="pill" id="status"></span></p>
+      <form id="prefs" novalidate>
+        <div class="row">
+          <div><label for="county">Де шукаєте роботу</label>
+            <select id="county">
+              <option>Дублін</option><option>Корк</option><option>Голвей</option><option>Лімерик</option><option>Інше графство</option><option>Будь-де в Ірландії</option>
+            </select></div>
+          <div><label for="english">Ваш рівень англійської</label>
+            <select id="english">
+              <option>Початковий (A1–A2)</option><option>Середній (B1)</option><option>Вище середнього (B2)</option><option>Вільний (C1+)</option>
+            </select></div>
+        </div>
+        <label>Яка робота вас цікавить</label>
+        <div class="checks">
+          <label><input type="checkbox" name="interest" value="warehouse"> Склад і логістика</label>
+          <label><input type="checkbox" name="interest" value="kitchen"> Кухня та кейтеринг</label>
+          <label><input type="checkbox" name="interest" value="cleaning"> Прибирання</label>
+          <label><input type="checkbox" name="interest" value="care"> Догляд (care assistant)</label>
+          <label><input type="checkbox" name="interest" value="hairdresser"> Перукар / барбер / б'юті</label>
+          <label><input type="checkbox" name="interest" value="construction"> Будівництво</label>
+          <label><input type="checkbox" name="interest" value="driver"> Водій / кур'єр</label>
+          <label><input type="checkbox" name="interest" value="admin"> Адміністрування / офіс</label>
+          <label><input type="checkbox" name="interest" value="retail"> Магазини</label>
+          <label><input type="checkbox" name="interest" value="it"> IT / IT-підтримка</label>
+        </div>
+        <div class="actions">
+          <button class="btn" type="submit" id="save">Зберегти зміни</button>
+          <a class="btn ghost" href="./">На головну</a>
+        </div>
+      </form>
+      <div id="msg" role="status"></div>
+      <div class="danger-zone">
+        <p class="muted" id="toggleHint" style="margin:0 0 10px"></p>
+        <button class="btn danger" type="button" id="toggle"></button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  // Сторінка відкривається за особистим посиланням ...manage.html?t=<токен>.
+  // Публічний ключ дозволяє лише викликати функції, які працюють з одним записом за цим токеном.
+  const SUPABASE_URL = 'https://npwqiyzmhjypfvrjssxi.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_WTU8US3Ntbb25UkiWG-p9A_IitkQ6UH';
+  const $ = id => document.getElementById(id);
+  const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+  let token = new URLSearchParams(location.search).get('t');
+  if (!token) { try { token = localStorage.getItem('uaj_token'); } catch (e) {} }
+  let active = true;
+
+  async function rpc(name, body) {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/rpc/' + name, {
+      method: 'POST', headers: { 'apikey': SUPABASE_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    if (!res.ok) throw new Error(res.status + ' ' + await res.text());
+    return res.json();
+  }
+  function say(text, color) { $('msg').style.color = color || ''; $('msg').textContent = text; }
+  function setSelect(sel, value) {
+    if (!value) return;
+    if (![...sel.options].some(o => o.value === value)) { const o = document.createElement('option'); o.textContent = value; sel.append(o); }
+    sel.value = value;
+  }
+  function paintStatus() {
+    $('status').textContent = active ? 'підписка активна' : 'ви відписані';
+    $('status').className = 'pill ' + (active ? 'on' : 'off');
+    $('toggle').textContent = active ? 'Відписатися від добірки' : 'Підписатися знову';
+    $('toggle').className = 'btn ' + (active ? 'danger' : '');
+    $('toggleHint').textContent = active
+      ? 'Більше не хочете отримувати листи? Відписатися можна одним натиском, повернутися — так само.'
+      : 'Зараз листи вам не надходять. Налаштування збережено — можна будь-коли підписатися знову.';
+  }
+  function current() {
+    return { p_token: token, p_county: $('county').value, p_english_level: $('english').value,
+             p_interests: [...document.querySelectorAll('input[name=interest]:checked')].map(i => i.value) };
+  }
+
+  async function load() {
+    if (!token || !UUID.test(token)) {
+      $('who').textContent = 'Посилання неповне. Відкрийте особисте посилання з листа з добіркою або з повідомлення, яке ви бачили після підписки.';
+      return;
+    }
+    try {
+      const s = await rpc('ua_jobs_get_subscription', { p_token: token });
+      if (!s) { $('who').textContent = 'Підписку за цим посиланням не знайдено. Можливо, посилання скопійовано не повністю.'; return; }
+      try { localStorage.setItem('uaj_token', token); } catch (e) {}
+      $('who').textContent = 'Підписка для ' + s.email + '. Змініть, що потрібно, і натисніть «Зберегти зміни».';
+      setSelect($('county'), s.county); setSelect($('english'), s.english_level);
+      const set = new Set(s.interests || []);
+      document.querySelectorAll('input[name=interest]').forEach(i => { i.checked = set.has(i.value); });
+      active = s.status !== 'unsubscribed'; paintStatus();
+      $('panel').hidden = false;
+    } catch (e) { $('who').textContent = 'Не вдалося завантажити налаштування. Спробуйте оновити сторінку пізніше.'; console.error(e); }
+  }
+
+  $('prefs').addEventListener('submit', async (e) => {
+    e.preventDefault(); $('save').disabled = true; say('Зберігаємо…');
+    try {
+      const ok = await rpc('ua_jobs_update_subscription', { ...current(), p_active: active });
+      say(ok ? 'Збережено ✓ Наступна добірка враховуватиме нові налаштування.' : 'Підписку не знайдено.', ok ? 'var(--green)' : 'var(--red)');
+    } catch (err) { say('Не вдалося зберегти. Спробуйте пізніше.', 'var(--red)'); console.error(err); }
+    $('save').disabled = false;
+  });
+
+  $('toggle').addEventListener('click', async () => {
+    const next = !active; $('toggle').disabled = true;
+    try {
+      const ok = await rpc('ua_jobs_update_subscription', { ...current(), p_active: next });
+      if (ok) { active = next; paintStatus(); say(active ? 'Ви знову підписані ✓' : 'Ви відписалися. Листи більше не надходитимуть.', active ? 'var(--green)' : 'var(--ink)'); }
+    } catch (err) { say('Не вдалося змінити статус. Спробуйте пізніше.', 'var(--red)'); console.error(err); }
+    $('toggle').disabled = false;
+  });
+
+  load();
+</script>
+</body>
+</html>

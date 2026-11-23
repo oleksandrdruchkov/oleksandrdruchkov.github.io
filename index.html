@@ -70,6 +70,9 @@
   .steps{margin:0 0 24px;padding-left:20px;color:var(--muted)}
   .steps li{margin-bottom:6px}
   .steps b{color:var(--ink)}
+  .linkbox{background:var(--green-soft);border-radius:12px;padding:14px 16px;margin-top:6px}
+  .linkrow{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+  .btn.small{padding:8px 14px;font-size:14px;margin-left:0}
   .hero-actions{display:flex;flex-wrap:wrap;gap:10px}
   .hero-actions .btn.ghost{margin-left:0}
   /* Телефони */
@@ -99,6 +102,7 @@
       <a class="link" href="#top">Пошук</a>
       <a class="link" href="#digest" id="navDigest" hidden>Добірка</a>
       <a class="link" href="#subscribe">Підписка</a>
+      <a class="link" href="manage.html" id="navSettings" hidden>Мої налаштування</a>
       <a class="link" href="#about-en">About (EN)</a>
     </nav>
   </div>
@@ -222,45 +226,69 @@
 </footer>
 
 <script>
-  // Підписка зберігається напряму в Supabase (таблиця ua_jobs_subscribers).
-  // Публічний ключ дозволяє лише ДОДАТИ запис: читати чи змінювати дані підписників з сайту неможливо.
+  // Підписка: через функцію ua_jobs_subscribe у Supabase. Публічний ключ не дає читати чи змінювати чужі дані:
+  // змінити налаштування можна лише за особистим посиланням (токеном), яке підписник отримує після підписки.
   const SUPABASE_URL = 'https://npwqiyzmhjypfvrjssxi.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_WTU8US3Ntbb25UkiWG-p9A_IitkQ6UH';
+  const MANAGE_URL = new URL('manage.html', location.href).href.split('?')[0];
 
   const form = document.getElementById('subForm');
   const msg = document.getElementById('formMsg');
   const show = (text, color) => { msg.style.color = color || ''; msg.textContent = text; };
-  const THANKS = 'Дякуємо, ви підписані! Перша добірка прийде на ваш email, щойно буде готова. А поки що скористайтеся пошуком угорі сторінки.';
+
+  function store(token) { try { localStorage.setItem('uaj_token', token); } catch (e) {} }
+  function stored() { try { return localStorage.getItem('uaj_token'); } catch (e) { return null; } }
+  function manageLink(token) { return MANAGE_URL + '?t=' + encodeURIComponent(token); }
+
+  // Якщо в цьому браузері вже є підписка — показуємо пункт меню «Мої налаштування»
+  (function () {
+    const t = stored(); const a = document.getElementById('navSettings');
+    if (t && a) { a.href = manageLink(t); a.hidden = false; }
+  })();
+
+  function showCreated(token) {
+    const link = manageLink(token);
+    msg.replaceChildren();
+    msg.style.color = '#1d7a46';
+    const p1 = document.createElement('p'); p1.style.margin = '0 0 10px';
+    p1.textContent = 'Дякуємо, ви підписані! Перша добірка прийде на ваш email, щойно буде готова.';
+    const box = document.createElement('div'); box.className = 'linkbox';
+    const p2 = document.createElement('p'); p2.style.margin = '0 0 8px'; p2.style.color = 'var(--ink)'; p2.style.fontWeight = '400';
+    p2.textContent = 'Ваше особисте посилання, щоб будь-коли змінити місто, рівень англійської й напрямки або відписатися. Збережіть його: воно також буде в кожному листі.';
+    const a = document.createElement('a'); a.href = link; a.textContent = 'Змінити налаштування підписки'; a.style.fontWeight = '600';
+    const copy = document.createElement('button'); copy.type = 'button'; copy.className = 'btn ghost small'; copy.textContent = 'Скопіювати посилання';
+    copy.onclick = async () => { try { await navigator.clipboard.writeText(link); copy.textContent = 'Скопійовано ✓'; } catch (e) { prompt('Скопіюйте посилання:', link); } };
+    const row = document.createElement('div'); row.className = 'linkrow'; row.append(a, copy);
+    box.append(p2, row); msg.append(p1, box);
+  }
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = form.querySelector('button[type=submit]');
     const data = new FormData(form);
 
-    if (data.get('website')) { form.reset(); show(THANKS, '#1d7a46'); return; }
+    if (data.get('website')) { form.reset(); show('Дякуємо, ви підписані!', '#1d7a46'); return; }
 
     const email = (data.get('email') || '').trim();
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { show('Перевірте, будь ласка, email.', '#b42318'); return; }
     if (!data.get('consent')) { show('Позначте, будь ласка, згоду на отримання добірки.', '#b42318'); return; }
 
-    const payload = {
-      email: email,
-      county: data.get('county'),
-      english_level: data.get('english'),
-      interests: data.getAll('interest'),
-      consent: true
-    };
-
     btn.disabled = true; show('Надсилаємо…');
     try {
-      const res = await fetch(SUPABASE_URL + '/rest/v1/ua_jobs_subscribers', {
+      const res = await fetch(SUPABASE_URL + '/rest/v1/rpc/ua_jobs_subscribe', {
         method: 'POST',
-        headers: { 'apikey': SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-        body: JSON.stringify(payload)
+        headers: { 'apikey': SUPABASE_KEY, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ p_email: email, p_county: data.get('county'), p_english_level: data.get('english'),
+                               p_interests: data.getAll('interest'), p_consent: true })
       });
-      if (res.ok) { form.reset(); show(THANKS, '#1d7a46'); }
-      else if (res.status === 409) { show('Цей email уже підписаний. Добірка надходитиме як і раніше.', '#1d7a46'); }
-      else { show('Щось пішло не так. Спробуйте пізніше.', '#b42318'); console.error('Supabase', res.status, await res.text()); }
+      const out = res.ok ? await res.json() : null;
+      if (out && out.status === 'created' && out.token) { form.reset(); store(out.token); showCreated(out.token); }
+      else if (out && out.status === 'exists') {
+        const t = stored();
+        if (t) { show('Цей email уже підписаний. Змінити налаштування можна в меню «Мої налаштування» вгорі сторінки.', '#1d7a46'); }
+        else { show('Цей email уже підписаний. Змінити налаштування можна за особистим посиланням, яке ви отримали після підписки (воно є і в кожному листі з добіркою).', '#1d7a46'); }
+      }
+      else { show('Щось пішло не так. Спробуйте пізніше.', '#b42318'); console.error('Supabase', res.status, out); }
     } catch (err) { show('Немає з\'єднання. Спробуйте пізніше.', '#b42318'); }
     btn.disabled = false;
   });
