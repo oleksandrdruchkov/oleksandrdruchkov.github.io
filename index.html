@@ -123,8 +123,9 @@
     <div class="card" style="padding:32px">
       <h2>Отримувати щотижневу добірку</h2>
       <p class="sub">Безкоштовно. Ваші відповіді допоможуть нам зрозуміти, які вакансії шукати насамперед.</p>
-      <form id="subForm" action="https://formspree.io/f/xoedplwp" method="POST">
-        <input type="hidden" name="_subject" value="Нова підписка — UA Jobs Ireland">
+      <form id="subForm" novalidate>
+        <!-- пастка для ботів: людина це поле не бачить -->
+        <div style="position:absolute;left:-9999px" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
         <div class="row">
           <div><label for="email">Email</label><input id="email" type="email" name="email" required placeholder="you@example.com"></div>
           <div><label for="county">Де шукаєте роботу</label>
@@ -148,7 +149,10 @@
           <label><input type="checkbox" name="interest" value="construction"> Будівництво</label>
           <label><input type="checkbox" name="interest" value="it"> IT / IT-підтримка</label>
         </div>
-        <p class="consent">Підписуючись, ви погоджуєтесь отримувати добірку вакансій на цей email. Ми використовуємо його лише для розсилки й нікому не передаємо. Відписатися можна будь-коли, відповівши на лист.</p>
+        <label class="consent" style="display:flex;gap:8px;align-items:flex-start;font-weight:400">
+          <input type="checkbox" name="consent" required style="margin-top:3px">
+          <span>Я погоджуюсь отримувати щотижневу добірку вакансій на цей email. Ми використовуємо ваші дані лише для підбору й розсилки вакансій і нікому їх не передаємо. Відписатися можна будь-коли за посиланням у кожному листі.</span>
+        </label>
         <button class="btn" type="submit">Підписатися</button>
         <div id="formMsg" role="status"></div>
       </form>
@@ -183,22 +187,45 @@
 </footer>
 
 <script>
+  // Підписка зберігається напряму в Supabase (таблиця ua_jobs_subscribers).
+  // Публічний ключ дозволяє лише ДОДАТИ запис: читати чи змінювати дані підписників з сайту неможливо.
+  const SUPABASE_URL = 'https://npwqiyzmhjypfvrjssxi.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_WTU8US3Ntbb25UkiWG-p9A_IitkQ6UH';
+
   const form = document.getElementById('subForm');
   const msg = document.getElementById('formMsg');
+  const show = (text, color) => { msg.style.color = color || ''; msg.textContent = text; };
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = form.querySelector('button[type=submit]');
     const data = new FormData(form);
-    // усі позначені категорії — в одне поле через кому
-    const interests = data.getAll('interest');
-    data.delete('interest');
-    data.append('interest', interests.length ? interests.join(', ') : 'не вказано');
-    btn.disabled = true; msg.style.color = ''; msg.textContent = 'Надсилаємо…';
+
+    if (data.get('website')) { form.reset(); show('Дякуємо! Першу добірку ви отримаєте найближчим часом.', '#1d7a46'); return; }
+
+    const email = (data.get('email') || '').trim();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { show('Перевірте, будь ласка, email.', '#b42318'); return; }
+    if (!data.get('consent')) { show('Позначте, будь ласка, згоду на отримання добірки.', '#b42318'); return; }
+
+    const payload = {
+      email: email,
+      county: data.get('county'),
+      english_level: data.get('english'),
+      interests: data.getAll('interest'),
+      consent: true
+    };
+
+    btn.disabled = true; show('Надсилаємо…');
     try {
-      const res = await fetch(form.action, {method:'POST', body:data, headers:{'Accept':'application/json'}});
-      if (res.ok) { form.reset(); msg.style.color='#1d7a46'; msg.textContent = 'Дякуємо! Першу добірку ви отримаєте найближчим часом.'; }
-      else { msg.style.color='#b42318'; msg.textContent = 'Щось пішло не так. Спробуйте пізніше.'; }
-    } catch (err) { msg.style.color='#b42318'; msg.textContent = 'Немає з\'єднання. Спробуйте пізніше.'; }
+      const res = await fetch(SUPABASE_URL + '/rest/v1/ua_jobs_subscribers', {
+        method: 'POST',
+        headers: { 'apikey': SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) { form.reset(); show('Дякуємо! Першу добірку ви отримаєте найближчим часом.', '#1d7a46'); }
+      else if (res.status === 409) { show('Цей email уже підписаний. Добірка надходитиме як і раніше.', '#1d7a46'); }
+      else { show('Щось пішло не так. Спробуйте пізніше.', '#b42318'); console.error('Supabase', res.status, await res.text()); }
+    } catch (err) { show('Немає з\'єднання. Спробуйте пізніше.', '#b42318'); }
     btn.disabled = false;
   });
 </script>
