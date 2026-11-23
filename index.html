@@ -59,7 +59,11 @@
   .badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
   .badge{font-size:12px;font-weight:600;padding:3px 8px;border-radius:6px;background:var(--blue-soft);color:var(--blue)}
   .badge.g{background:var(--green-soft);color:var(--green)}
-  .job .go{display:inline-block;margin-top:12px;font-weight:600;font-size:14px}
+  .job .go{display:inline-block;font-weight:600;font-size:14px}
+  .apply{display:flex;flex-direction:column;gap:4px;margin-top:12px;font-size:13px;color:var(--muted)}
+  .apply .deadline{font-weight:600;color:var(--ink)}
+  .apply .deadline.soon{color:#b42318}
+  .links2{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;margin-top:12px}
   #digestStatus{color:var(--muted)}
   html{overflow-y:scroll;scrollbar-gutter:stable;scroll-behavior:smooth}
   [id]{scroll-margin-top:12px}
@@ -298,7 +302,7 @@
   // Добірка: читаємо таблицю ua_jobs_vacancies (публічний ключ дозволяє лише читати свіжі опубліковані вакансії)
   (function () {
     const URL_ = 'https://npwqiyzmhjypfvrjssxi.supabase.co/rest/v1/ua_jobs_vacancies'
-      + '?select=job_id,title,company,location,county,category,english_level,experience,employment_type,salary,summary_uk,url,last_seen'
+      + '?select=job_id,title,company,location,county,category,english_level,experience,employment_type,salary,summary_uk,url,last_seen,apply_deadline,apply_via,apply_url'
       + '&order=last_seen.desc,first_seen.desc&limit=300';
     const KEY = 'sb_publishable_WTU8US3Ntbb25UkiWG-p9A_IitkQ6UH';
     const CAT = {warehouse:'Склад',kitchen:'Кухня',cleaning:'Прибирання',hairdresser:"Перукар / б'юті",care:'Догляд',
@@ -334,7 +338,29 @@
         if (EMP[j.employment_type]) b.append(el('span', 'badge', EMP[j.employment_type]));
         if (j.salary) b.append(el('span', 'badge', j.salary));
         card.append(b);
-        const go = el('a', 'go', 'Відкрити оголошення →'); go.href = href; go.target = '_blank'; go.rel = 'nofollow noopener'; card.append(go);
+        // Як і до коли подавати
+        if (j.apply_deadline || j.apply_via) {
+          const ap = el('div', 'apply');
+          if (j.apply_deadline) {
+            const d = new Date(j.apply_deadline + 'T00:00:00');
+            const days = Math.round((d - new Date(new Date().toDateString())) / 864e5);
+            ap.append(el('span', 'deadline' + (days <= 7 ? ' soon' : ''),
+              'Подати до ' + d.toLocaleDateString('uk-UA') + (days <= 7 ? (days <= 0 ? ' (сьогодні)' : ` (${days} дн.)`) : '')));
+          }
+          const via = j.apply_via === 'JobsIreland' ? 'Заявка через державний портал JobsIreland (потрібна безкоштовна реєстрація)'
+            : j.apply_via === 'email' ? 'Заявка електронною поштою: адреса в оголошенні'
+            : (j.apply_via && j.apply_via !== 'EURES') ? 'Заявка на сайті роботодавця (' + j.apply_via + ')' : '';
+          if (via) ap.append(el('span', 'via', via));
+          card.append(ap);
+        }
+        const links = el('div', 'links2');
+        const applyHref = safeUrl(j.apply_url);
+        if (applyHref && applyHref !== href) {
+          const ab = el('a', 'btn small', 'Подати заявку →'); ab.href = applyHref; ab.target = '_blank'; ab.rel = 'nofollow noopener'; links.append(ab);
+        }
+        const go = el('a', 'go', applyHref && applyHref !== href ? 'Деталі вакансії' : 'Відкрити оголошення →');
+        go.href = href; go.target = '_blank'; go.rel = 'nofollow noopener'; links.append(go);
+        card.append(links);
         box.append(card);
       }
     }
