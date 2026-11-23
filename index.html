@@ -62,12 +62,23 @@
   .job .go{display:inline-block;margin-top:12px;font-weight:600;font-size:14px}
   #digestStatus{color:var(--muted)}
   html{overflow-y:scroll;scrollbar-gutter:stable}
-  /* JobBox Careerjet: фіксована висота, щоб зміни віджета не рухали сторінку */
-  #cjJobBoxWrap{height:620px;overflow-y:scroll;scrollbar-gutter:stable;overflow-x:hidden;overscroll-behavior:contain;contain:layout paint;
-    background:#fff;border:1px solid var(--line);border-radius:14px;padding:8px 16px}
-  /* Віджет сам змінює висоту свого вікна — фіксуємо її, щоб він не «дихав» */
-  #cjJobBoxWrap iframe{display:block;width:100%!important;height:600px!important;min-height:600px!important;max-height:600px!important;border:0}
-  #cjJobBoxWrap .cj-job-box{min-height:600px}
+  .hero-actions{display:flex;flex-wrap:wrap;gap:10px}
+  .hero-actions .btn.ghost{margin-left:0}
+  /* Телефони */
+  @media (max-width:640px){
+    .nav{height:auto;flex-direction:column;align-items:flex-start;gap:8px;padding-top:12px;padding-bottom:12px}
+    .nav nav{display:flex;flex-wrap:wrap;gap:6px 16px}
+    .nav a.link{margin-left:0;font-size:14px}
+    .hero{padding:32px 0 28px}
+    .hero p.lead{font-size:17px}
+    .hero-actions .btn{flex:1 1 100%;text-align:center}
+    section{padding:32px 0}
+    h2{font-size:24px}
+    .filters{flex-direction:column}
+    .filters select{width:100%;min-width:0}
+    #subscribe .card{padding:20px!important}
+    .grid{grid-template-columns:1fr}
+  }
 </style>
 </head>
 <body>
@@ -88,8 +99,10 @@
   <div class="wrap">
     <h1>Вакансії в Ірландії, відібрані для українців</h1>
     <p class="lead">Раз на тиждень ми надсилаємо добірку свіжих вакансій у Дубліні та по всій Ірландії. Біля кожної вакансії стоїть позначка, який рівень англійської для неї потрібен. Це для тих, хто тільки починає і хоче знайти першу або кращу роботу.</p>
-    <a class="btn" href="#subscribe">Отримувати добірку</a>
-    <a class="btn ghost" href="#how">Як це працює</a>
+    <div class="hero-actions">
+      <a class="btn" href="#subscribe">Отримувати добірку</a>
+      <a class="btn ghost" href="#digest">Переглянути вакансії</a>
+    </div>
     <div class="tags">
       <span class="tag">Склад і логістика</span><span class="tag">Кухня та кейтеринг</span>
       <span class="tag">Адміністрування</span><span class="tag">Водії та кур'єри</span>
@@ -128,9 +141,7 @@
     <p id="digestStatus">Завантажуємо вакансії…</p>
     <div class="grid" id="digestList"></div>
 
-    <h3 style="margin:36px 0 6px">Більше вакансій за вашими фільтрами</h3>
-    <p class="soon" style="margin:0 0 14px">Свіжі вакансії з <a href="https://www.careerjet.ie" target="_blank" rel="noopener">Careerjet</a>, оновлюються автоматично. Рівень англійської тут не позначено, перевіряйте в оголошенні.</p>
-    <div id="cjJobBoxWrap"></div>
+    <p class="soon" style="margin-top:20px">Не знайшли потрібного? <a href="#search">Шукайте серед усіх вакансій Ірландії →</a></p>
   </div>
 </section>
 
@@ -160,7 +171,7 @@
   </div>
 </section>
 
-<section>
+<section id="search">
   <div class="wrap">
     <h2>Пошук вакансій</h2>
     <p class="sub">Шукайте серед усіх вакансій в Ірландії: введіть посаду або ключові слова (англійською, наприклад <em>warehouse</em>, <em>cleaner</em>, <em>care assistant</em>) і місто.</p>
@@ -227,7 +238,7 @@
   <div class="wrap">
     <h2>About (English)</h2>
     <p>UA Jobs Ireland is a non-commercial project that helps Ukrainians living in Ireland, including people under EU temporary protection, find work. We send a weekly email digest of entry-level and mid-level vacancies (warehouse, catering, admin, driving, cleaning, hairdressing and beauty, care, IT support) across Dublin and the rest of Ireland. Each vacancy is marked with the level of English it requires.</p>
-    <p>Vacancies are collected and pre-screened by our open-source assistant <a href="https://github.com/oleksandrdruchkov/oleksandrdruchkov.github.io#readme" target="_blank" rel="noopener">Job Hunter AI</a>. A daily list of vacancies is shown on this page with filters by category, county and required English level; every listing links back to its original source, and users apply directly with the employer or job board. An on-site job search for Ireland is in development.</p>
+    <p>Vacancies are collected and pre-screened by our open-source assistant <a href="https://github.com/oleksandrdruchkov/oleksandrdruchkov.github.io#readme" target="_blank" rel="noopener">Job Hunter AI</a>. A daily list of vacancies is shown on this page with filters by category, county and required English level; every listing links back to its original source, and users apply directly with the employer or job board. The site also offers a search across all vacancies in Ireland, powered by Careerjet.</p>
   </div>
 </section>
 
@@ -307,7 +318,7 @@
       const box = $('digestList'); box.replaceChildren();
       $('digestStatus').textContent = list.length
         ? `Знайдено вакансій: ${list.length}` + (e ? ' (вакансії, де рівень англійської не вказано, приховано)' : '')
-        : (jobs.length ? 'За цими фільтрами вакансій поки немає. Спробуйте інші.' : 'Наша перевірена добірка ще наповнюється. Поки що дивіться свіжі вакансії нижче.');
+        : (jobs.length ? 'За цими фільтрами вакансій поки немає. Спробуйте інші.' : 'Наша перевірена добірка ще наповнюється. Поки що скористайтеся пошуком по всіх вакансіях Ірландії нижче.');
       for (const j of list.slice(0, 120)) {
         const href = safeUrl(j.url);
         const card = el('div', 'card job');
@@ -336,31 +347,7 @@
         render();
       })
       .catch(() => { $('digestStatus').textContent = 'Не вдалося завантажити добірку. Спробуйте оновити сторінку пізніше.'; });
-    // --- Careerjet JobBox, синхронізований із фільтрами категорії та графства
-    const CJ_SEARCH = {warehouse:'warehouse',kitchen:'kitchen',cleaning:'cleaner',hairdresser:'hairdresser',care:'care assistant',
-      construction:'general operative',driver:'driver',admin:'administrator',it:'it support',retail:'retail assistant',other:''};
-    let cjTimer = null, cjLast = null;
-    function loadJobBox() {
-      const c = $('fCategory').value, k = $('fCounty').value;
-      const key = c + '|' + k;
-      if (key === cjLast) return;   // ті самі параметри — не перезавантажуємо
-      cjLast = key;
-      const wrap = $('cjJobBoxWrap'); wrap.replaceChildren();
-      const box = el('div', 'cj-job-box');
-      box.setAttribute('data-url', 'https://widget.careerjet.net/job-box/a1f692f00af4418c0b57c0cfc744c269');
-      box.setAttribute('data-search', CJ_SEARCH[c] || '');
-      box.setAttribute('data-location', k ? (k + ', Ireland') : 'Ireland');
-      wrap.append(box);
-      const old = document.getElementById('cj-job-box'); if (old) old.remove();
-      const js = document.createElement('script'); js.id = 'cj-job-box'; js.async = true;
-      js.src = 'https://static.careerjet.org/js/all_widget_job_box_3rd_party.min.js?t=' + Date.now();
-      document.body.appendChild(js);
-    }
-    ['fCategory', 'fCounty', 'fEnglish'].forEach(id => $(id).addEventListener('change', () => {
-      render();
-      if (id !== 'fEnglish') { clearTimeout(cjTimer); cjTimer = setTimeout(loadJobBox, 300); }
-    }));
-    loadJobBox();
+    ['fCategory', 'fCounty', 'fEnglish'].forEach(id => $(id).addEventListener('change', render));
   })();
 </script>
 <script>
