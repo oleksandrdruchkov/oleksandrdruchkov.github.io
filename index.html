@@ -65,6 +65,9 @@
   /* JobBox Careerjet: фіксована висота, щоб зміни віджета не рухали сторінку */
   #cjJobBoxWrap{height:620px;overflow-y:scroll;scrollbar-gutter:stable;overflow-x:hidden;overscroll-behavior:contain;contain:layout paint;
     background:#fff;border:1px solid var(--line);border-radius:14px;padding:8px 16px}
+  /* Віджет сам змінює висоту свого вікна — фіксуємо її, щоб він не «дихав» */
+  #cjJobBoxWrap iframe{display:block;width:100%!important;height:600px!important;min-height:600px!important;max-height:600px!important;border:0}
+  #cjJobBoxWrap .cj-job-box{min-height:600px}
 </style>
 </head>
 <body>
