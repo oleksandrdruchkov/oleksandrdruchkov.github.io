@@ -120,6 +120,10 @@
     </div>
     <p id="digestStatus">Завантажуємо вакансії…</p>
     <div class="grid" id="digestList"></div>
+
+    <h3 style="margin:36px 0 6px">Більше вакансій за вашими фільтрами</h3>
+    <p class="soon" style="margin:0 0 14px">Свіжі вакансії з <a href="https://www.careerjet.ie" target="_blank" rel="noopener">Careerjet</a>, оновлюються автоматично. Рівень англійської тут не позначено, перевіряйте в оголошенні.</p>
+    <div id="cjJobBoxWrap"></div>
   </div>
 </section>
 
@@ -296,7 +300,7 @@
       const box = $('digestList'); box.replaceChildren();
       $('digestStatus').textContent = list.length
         ? `Знайдено вакансій: ${list.length}` + (e ? ' (вакансії, де рівень англійської не вказано, приховано)' : '')
-        : (jobs.length ? 'За цими фільтрами вакансій поки немає. Спробуйте інші.' : 'Добірка оновлюється щодня. Перші вакансії з\'являться найближчим часом.');
+        : (jobs.length ? 'За цими фільтрами вакансій поки немає. Спробуйте інші.' : 'Наша перевірена добірка ще наповнюється. Поки що дивіться свіжі вакансії нижче.');
       for (const j of list.slice(0, 120)) {
         const href = safeUrl(j.url);
         const card = el('div', 'card job');
@@ -319,12 +323,34 @@
       .then(r => r.ok ? r.json() : Promise.reject(r.status))
       .then(data => {
         jobs = (Array.isArray(data) ? data : []).filter(j => safeUrl(j.url));
-        const counties = [...new Set(jobs.map(j => j.county).filter(Boolean))].sort((a, b) => a === 'Dublin' ? -1 : b === 'Dublin' ? 1 : a.localeCompare(b));
+        const BASE = ['Dublin','Cork','Galway','Limerick','Waterford','Kildare','Meath','Wicklow','Louth','Wexford','Kilkenny','Kerry','Clare','Tipperary','Westmeath','Sligo','Donegal','Mayo'];
+        const counties = [...new Set(BASE.concat(jobs.map(j => j.county).filter(Boolean)))].sort((a, b) => a === 'Dublin' ? -1 : b === 'Dublin' ? 1 : a.localeCompare(b));
         for (const c of counties) { const o = el('option', null, c); o.value = c; $('fCounty').append(o); }
         render();
       })
       .catch(() => { $('digestStatus').textContent = 'Не вдалося завантажити добірку. Спробуйте оновити сторінку пізніше.'; });
-    ['fCategory', 'fCounty', 'fEnglish'].forEach(id => $(id).addEventListener('change', render));
+    // --- Careerjet JobBox, синхронізований із фільтрами категорії та графства
+    const CJ_SEARCH = {warehouse:'warehouse',kitchen:'kitchen',cleaning:'cleaner',hairdresser:'hairdresser',care:'care assistant',
+      construction:'general operative',driver:'driver',admin:'administrator',it:'it support',retail:'retail assistant',other:''};
+    let cjTimer = null;
+    function loadJobBox() {
+      const c = $('fCategory').value, k = $('fCounty').value;
+      const wrap = $('cjJobBoxWrap'); wrap.replaceChildren();
+      const box = el('div', 'cj-job-box');
+      box.setAttribute('data-url', 'https://widget.careerjet.net/job-box/a1f692f00af4418c0b57c0cfc744c269');
+      box.setAttribute('data-search', CJ_SEARCH[c] || '');
+      box.setAttribute('data-location', k ? (k + ', Ireland') : 'Ireland');
+      wrap.append(box);
+      const old = document.getElementById('cj-job-box'); if (old) old.remove();
+      const js = document.createElement('script'); js.id = 'cj-job-box'; js.async = true;
+      js.src = 'https://static.careerjet.org/js/all_widget_job_box_3rd_party.min.js?t=' + Date.now();
+      document.body.appendChild(js);
+    }
+    ['fCategory', 'fCounty', 'fEnglish'].forEach(id => $(id).addEventListener('change', () => {
+      render();
+      if (id !== 'fEnglish') { clearTimeout(cjTimer); cjTimer = setTimeout(loadJobBox, 300); }
+    }));
+    loadJobBox();
   })();
 </script>
 <script>
