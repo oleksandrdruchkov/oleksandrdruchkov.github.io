@@ -51,6 +51,16 @@
   .links li{margin-bottom:10px}
   .en{background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
   footer{padding:32px 0;color:var(--muted);font-size:14px}
+  .filters{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:20px}
+  .filters select{width:auto;min-width:180px}
+  .job h3 a{color:var(--ink);text-decoration:none}
+  .job h3 a:hover{color:var(--blue);text-decoration:underline}
+  .meta{color:var(--muted);font-size:14px;margin:2px 0 8px}
+  .badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .badge{font-size:12px;font-weight:600;padding:3px 8px;border-radius:6px;background:var(--blue-soft);color:var(--blue)}
+  .badge.g{background:var(--green-soft);color:var(--green)}
+  .job .go{display:inline-block;margin-top:12px;font-weight:600;font-size:14px}
+  #digestStatus{color:var(--muted)}
 </style>
 </head>
 <body>
@@ -59,6 +69,7 @@
   <div class="wrap nav">
     <a class="brand" href="#"><span class="flag" aria-hidden="true"></span>UA Jobs Ireland</a>
     <nav>
+      <a class="link" href="#digest">Добірка</a>
       <a class="link" href="#how">Як це працює</a>
       <a class="link" href="#subscribe">Підписатися</a>
       <a class="link" href="#about-en">About (EN)</a>
@@ -79,6 +90,38 @@
     </div>
   </div>
 </div>
+
+<section id="digest">
+  <div class="wrap">
+    <h2>Добірка вакансій</h2>
+    <p class="sub">Свіжі вакансії по Ірландії, які щодня відбирає наш асистент. Біля кожної є позначка, який рівень англійської для неї потрібен. Відгукуйтесь на оригінальному сайті оголошення.</p>
+    <div class="filters">
+      <select id="fCategory" aria-label="Категорія">
+        <option value="">Усі категорії</option>
+        <option value="warehouse">Склад і логістика</option>
+        <option value="kitchen">Кухня та кейтеринг</option>
+        <option value="cleaning">Прибирання</option>
+        <option value="hairdresser">Перукар / барбер / б'юті</option>
+        <option value="care">Догляд</option>
+        <option value="construction">Будівництво</option>
+        <option value="driver">Водій / кур'єр</option>
+        <option value="admin">Адміністрування / офіс</option>
+        <option value="it">IT / IT-підтримка</option>
+        <option value="retail">Магазини</option>
+        <option value="other">Інше</option>
+      </select>
+      <select id="fCounty" aria-label="Графство"><option value="">Уся Ірландія</option></select>
+      <select id="fEnglish" aria-label="Рівень англійської">
+        <option value="">Будь-який рівень англійської</option>
+        <option value="basic">Мені достатньо базової</option>
+        <option value="B1">До B1 включно</option>
+        <option value="B2">До B2 включно</option>
+      </select>
+    </div>
+    <p id="digestStatus">Завантажуємо вакансії…</p>
+    <div class="grid" id="digestList"></div>
+  </div>
+</section>
 
 <section id="how">
   <div class="wrap">
@@ -176,7 +219,7 @@
   <div class="wrap">
     <h2>About (English)</h2>
     <p>UA Jobs Ireland is a non-commercial project that helps Ukrainians living in Ireland, including people under EU temporary protection, find work. We send a weekly email digest of entry-level and mid-level vacancies (warehouse, catering, admin, driving, cleaning, hairdressing and beauty, care, IT support) across Dublin and the rest of Ireland. Each vacancy is marked with the level of English it requires.</p>
-    <p>Vacancies are collected and pre-screened by our open-source assistant <a href="https://github.com/oleksandrdruchkov/job-hunter-ai" target="_blank" rel="noopener">Job Hunter AI</a>. Every listing links back to its original source, and users apply directly with the employer or job board. An on-site job search for Ireland, translated into Ukrainian, is in development.</p>
+    <p>Vacancies are collected and pre-screened by our open-source assistant <a href="https://github.com/oleksandrdruchkov/oleksandrdruchkov.github.io#readme" target="_blank" rel="noopener">Job Hunter AI</a>. A daily list of vacancies is shown on this page with filters by category, county and required English level; every listing links back to its original source, and users apply directly with the employer or job board. An on-site job search for Ireland is in development.</p>
   </div>
 </section>
 
@@ -228,6 +271,64 @@
     } catch (err) { show('Немає з\'єднання. Спробуйте пізніше.', '#b42318'); }
     btn.disabled = false;
   });
+</script>
+
+<script>
+  // Добірка: читаємо таблицю ua_jobs_vacancies (публічний ключ дозволяє лише читати свіжі опубліковані вакансії)
+  (function () {
+    const URL_ = 'https://npwqiyzmhjypfvrjssxi.supabase.co/rest/v1/ua_jobs_vacancies'
+      + '?select=job_id,title,company,location,county,category,english_level,experience,employment_type,salary,summary_uk,url,last_seen'
+      + '&order=last_seen.desc,first_seen.desc&limit=300';
+    const KEY = 'sb_publishable_WTU8US3Ntbb25UkiWG-p9A_IitkQ6UH';
+    const CAT = {warehouse:'Склад',kitchen:'Кухня',cleaning:'Прибирання',hairdresser:"Перукар / б'юті",care:'Догляд',
+      construction:'Будівництво',driver:'Водій',admin:'Офіс',it:'IT',retail:'Магазин',other:'Інше'};
+    const ENG = {basic:'Англійська: базова',B1:'Англійська: B1',B2:'Англійська: B2','C1+':'Англійська: C1+',unknown:'Англійська: не вказано'};
+    const EXP = {none:'Без досвіду',some:'Досвід бажаний',required:'Потрібен досвід'};
+    const EMP = {full_time:'Повна зайнятість',part_time:'Неповна зайнятість',flexible:'Гнучкий графік'};
+    const RANK = {basic:1,B1:2,B2:3,'C1+':4};
+    const $ = id => document.getElementById(id);
+    let jobs = [];
+
+    function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text) e.textContent = text; return e; }
+    function safeUrl(u) { try { const x = new URL(u); return (x.protocol === 'https:' || x.protocol === 'http:') ? x.href : null; } catch (e) { return null; } }
+
+    function render() {
+      const c = $('fCategory').value, k = $('fCounty').value, e = $('fEnglish').value;
+      const list = jobs.filter(j => (!c || j.category === c) && (!k || j.county === k)
+        && (!e || (RANK[j.english_level] && RANK[j.english_level] <= RANK[e])));
+      const box = $('digestList'); box.replaceChildren();
+      $('digestStatus').textContent = list.length
+        ? `Знайдено вакансій: ${list.length}` + (e ? ' (вакансії, де рівень англійської не вказано, приховано)' : '')
+        : (jobs.length ? 'За цими фільтрами вакансій поки немає. Спробуйте інші.' : 'Добірка оновлюється щодня. Перші вакансії з\'являться найближчим часом.');
+      for (const j of list.slice(0, 120)) {
+        const href = safeUrl(j.url);
+        const card = el('div', 'card job');
+        const h = el('h3'); const a = el('a', null, j.title); a.href = href; a.target = '_blank'; a.rel = 'nofollow noopener'; h.append(a); card.append(h);
+        card.append(el('div', 'meta', [j.company, j.location || j.county].filter(Boolean).join(' · ')));
+        if (j.summary_uk) card.append(el('p', null, j.summary_uk));
+        const b = el('div', 'badges');
+        b.append(el('span', 'badge', CAT[j.category] || 'Інше'));
+        b.append(el('span', 'badge g', ENG[j.english_level] || ENG.unknown));
+        if (EXP[j.experience]) b.append(el('span', 'badge', EXP[j.experience]));
+        if (EMP[j.employment_type]) b.append(el('span', 'badge', EMP[j.employment_type]));
+        if (j.salary) b.append(el('span', 'badge', j.salary));
+        card.append(b);
+        const go = el('a', 'go', 'Відкрити оголошення →'); go.href = href; go.target = '_blank'; go.rel = 'nofollow noopener'; card.append(go);
+        box.append(card);
+      }
+    }
+
+    fetch(URL_, { headers: { apikey: KEY } })
+      .then(r => r.ok ? r.json() : Promise.reject(r.status))
+      .then(data => {
+        jobs = (Array.isArray(data) ? data : []).filter(j => safeUrl(j.url));
+        const counties = [...new Set(jobs.map(j => j.county).filter(Boolean))].sort((a, b) => a === 'Dublin' ? -1 : b === 'Dublin' ? 1 : a.localeCompare(b));
+        for (const c of counties) { const o = el('option', null, c); o.value = c; $('fCounty').append(o); }
+        render();
+      })
+      .catch(() => { $('digestStatus').textContent = 'Не вдалося завантажити добірку. Спробуйте оновити сторінку пізніше.'; });
+    ['fCategory', 'fCounty', 'fEnglish'].forEach(id => $(id).addEventListener('change', render));
+  })();
 </script>
 </body>
 </html>
