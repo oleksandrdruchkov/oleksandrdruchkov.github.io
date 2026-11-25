@@ -60,6 +60,8 @@
   .badge{font-size:12px;font-weight:600;padding:3px 8px;border-radius:6px;background:var(--blue-soft);color:var(--blue)}
   .badge.g{background:var(--green-soft);color:var(--green)}
   .job .go{display:inline-block;font-weight:600;font-size:14px}
+  .job p{display:-webkit-box;-webkit-line-clamp:3;line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .more{display:block;margin:20px auto 0}
   .apply{display:flex;flex-direction:column;gap:4px;margin-top:12px;font-size:13px;color:var(--muted)}
   .apply .deadline{font-weight:600;color:var(--ink)}
   .apply .deadline.soon{color:#b42318}
@@ -153,6 +155,7 @@
     </div>
     <p id="digestStatus">Завантажуємо вакансії…</p>
     <div class="grid" id="digestList"></div>
+    <button class="btn more" id="digestMore" type="button" hidden></button>
     <p class="hint">Джерело вакансій: <a href="https://europa.eu/eures" target="_blank" rel="noopener">EURES</a>, Європейська мережа служб зайнятості, куди потрапляють і вакансії державного порталу <a href="https://jobsireland.ie" target="_blank" rel="noopener">JobsIreland</a> (Intreo). Категорію, графство, рівень англійської та короткий опис українською визначає наш асистент автоматично, тому перед відгуком перевіряйте умови в оригінальному оголошенні.</p>
   </div>
 </section>
@@ -338,19 +341,43 @@
     const RANK = {basic:1,B1:2,B2:3,'C1+':4};
     const $ = id => document.getElementById(id);
     let jobs = [];
+    // скільки карток показуємо за раз: на телефоні менше, бо картки йдуть в одну колонку
+    const PAGE = window.matchMedia('(max-width: 640px)').matches ? 6 : 12;
+    let shown = PAGE;
+    let catLabels = null;     // початкові підписи категорій у фільтрі
 
     function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text) e.textContent = text; return e; }
     function safeUrl(u) { try { const x = new URL(u); return (x.protocol === 'https:' || x.protocol === 'http:') ? x.href : null; } catch (e) { return null; } }
 
-    function render() {
+    // Кількість вакансій біля кожної категорії — з урахуванням графства й англійської
+    function updateCounts(k, e) {
+      const sel = $('fCategory');
+      if (!catLabels) catLabels = [...sel.options].map(o => o.textContent);
+      const pool = jobs.filter(j => (!k || j.county === k) && (!e || (RANK[j.english_level] && RANK[j.english_level] <= RANK[e])));
+      [...sel.options].forEach((o, i) => {
+        const n = o.value ? pool.filter(j => j.category === o.value).length : pool.length;
+        o.textContent = `${catLabels[i]} (${n})`;
+        o.disabled = !!o.value && n === 0 && sel.value !== o.value;
+      });
+    }
+
+    function render(keepPage) {
+      if (!keepPage) shown = PAGE;
       const c = $('fCategory').value, k = $('fCounty').value, e = $('fEnglish').value;
+      updateCounts(k, e);
       const list = jobs.filter(j => (!c || j.category === c) && (!k || j.county === k)
         && (!e || (RANK[j.english_level] && RANK[j.english_level] <= RANK[e])));
       const box = $('digestList'); box.replaceChildren();
+      const visible = Math.min(shown, list.length);
       $('digestStatus').textContent = list.length
-        ? `Знайдено вакансій: ${list.length}` + (e ? ' (вакансії, де рівень англійської не вказано, приховано)' : '')
+        ? `Знайдено вакансій: ${list.length}` + (list.length > visible ? `, показано ${visible}` : '')
+          + (e ? ' (вакансії, де рівень англійської не вказано, приховано)' : '')
         : (jobs.length ? 'За цими фільтрами вакансій поки немає. Спробуйте інші.' : 'Наша перевірена добірка ще наповнюється. Поки що скористайтеся пошуком по всіх вакансіях Ірландії нижче.');
-      for (const j of list.slice(0, 120)) {
+      const more = $('digestMore');
+      const rest = list.length - visible;
+      more.hidden = rest <= 0;
+      more.textContent = `Показати ще ${Math.min(PAGE, rest)} (залишилось ${rest})`;
+      for (const j of list.slice(0, visible)) {
         const href = safeUrl(j.url);
         const card = el('div', 'card job');
         const h = el('h3'); const a = el('a', null, j.title); a.href = href; a.target = '_blank'; a.rel = 'nofollow noopener'; h.append(a); card.append(h);
@@ -402,7 +429,8 @@
         render();
       })
       .catch(() => { /* добірка недоступна — розділ лишається прихованим */ });
-    ['fCategory', 'fCounty', 'fEnglish'].forEach(id => $(id).addEventListener('change', render));
+    ['fCategory', 'fCounty', 'fEnglish'].forEach(id => $(id).addEventListener('change', () => render()));
+    $('digestMore').addEventListener('click', () => { shown += PAGE; render(true); });
   })();
 </script>
 <script>
