@@ -6,7 +6,7 @@
 
 ## Що є на сайті
 - **Добірка вакансій.** Щодня оновлюваний список вакансій по Ірландії з фільтрами за категорією, графством і рівнем англійської, якого вимагає вакансія. Кожна вакансія веде на оригінальне оголошення, тож відгукуватися треба там.
-- **Підписка на щотижневу добірку** з вибором категорій, графства та свого рівня англійської.
+- **Email-підписка поки вимкнена:** розсилка ще не реалізована, тому форму підписки прибрано з сайту. Функції бази й `manage.html` збережено, щоб повернути її без переробок.
 - **Корисні посилання** на офіційні джерела (Citizens Information, gov.ie / Intreo) і великі сайти вакансій.
 
 ## Як працює відбір (Job Hunter AI)
@@ -23,4 +23,4 @@
 ---
 
 ## English
-UA Jobs Ireland is a non-commercial project that helps Ukrainians in Ireland, including people under EU temporary protection (Council Directive 2001/55/EC), find work. The site shows a daily list of vacancies across Ireland. Each one is classified by an AI model with no personal profile involved: category, county, required English level, whether experience is needed, and a short summary in Ukrainian. Every listing links back to its original source. Visitors can also subscribe to a weekly digest.
+UA Jobs Ireland is a non-commercial project that helps Ukrainians in Ireland, including people under EU temporary protection (Council Directive 2001/55/EC), find work. The site shows a daily list of vacancies across Ireland. Each one is classified by an AI model with no personal profile involved: category, county, required English level, whether experience is needed, and a short summary in Ukrainian. Every listing links back to its original source.
