@@ -95,26 +95,6 @@
   .links2{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;margin-top:auto;padding-top:18px}
   .job .go{display:inline-block;font-weight:500;font-size:15px}
 
-  /* Підписка */
-  #subscribe .formcard{max-width:820px;margin:0 auto;background:var(--bg);box-shadow:none;border-radius:28px;padding:56px}
-  #subscribe .formcard h2{margin-bottom:12px}
-  .steps{list-style:none;counter-reset:s;margin:0 auto 36px;padding:0;display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
-  .steps li{counter-increment:s;background:#fff;border-radius:14px;padding:18px 18px 18px 56px;position:relative;color:var(--muted);font-size:15px;line-height:1.4}
-  .steps li::before{content:counter(s);position:absolute;left:16px;top:16px;width:26px;height:26px;border-radius:50%;background:var(--blue);color:#fff;
-    font-size:14px;font-weight:600;display:grid;place-items:center}
-  .steps b{color:var(--ink);font-weight:600}
-  form .row{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-bottom:22px}
-  label{font-weight:600;font-size:14px;display:block;margin-bottom:8px;letter-spacing:-.01em}
-  .checks{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));margin:6px 0 20px}
-  .checks label{font-weight:400;font-size:15px;display:flex;gap:10px;align-items:center;margin:0;background:#fff;border-radius:12px;padding:12px 14px;cursor:pointer;
-    border:1px solid transparent;transition:border-color .2s}
-  .checks label:hover{border-color:var(--line)}
-  input[type=checkbox]{accent-color:var(--blue);width:18px;height:18px;flex:none}
-  .consent{font-size:13px;color:var(--muted);margin:10px 0 24px;line-height:1.45}
-  #subForm .btn[type=submit]{min-width:200px}
-  #formMsg{margin-top:14px;font-weight:600}
-  .linkbox{background:var(--green-soft);border-radius:14px;padding:16px 18px;margin-top:10px}
-  .linkrow{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
 
   /* Списки посилань — як згруповані списки в iOS */
   .links{list-style:none;padding:0;margin:0 auto;max-width:820px;background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
@@ -149,7 +129,6 @@
     .filters select{width:100%;min-width:0}
     .grid{grid-template-columns:1fr;gap:14px}
     .card{padding:22px}
-    #subscribe .formcard{padding:28px 20px;border-radius:22px}
     .links li{padding:16px 18px;font-size:15px}
   }
 </style>
@@ -162,8 +141,6 @@
     <nav>
       <a class="link" href="#top">Пошук</a>
       <a class="link" href="#digest" id="navDigest" hidden>Добірка</a>
-      <a class="link" href="#subscribe">Підписка</a>
-      <a class="link" href="manage.html" id="navSettings" hidden>Мої налаштування</a>
       <a class="link" href="#about-en">About (EN)</a>
     </nav>
   </div>
@@ -172,12 +149,11 @@
 <div class="hero" id="top">
   <div class="wrap">
     <h1>Вакансії в Ірландії</h1>
-    <p class="lead">Робота в Дубліні та по всій Ірландії: пошук серед усіх вакансій країни і добірка на email з позначкою, який рівень англійської потрібен.</p>
+    <p class="lead">Робота в Дубліні та по всій Ірландії: пошук серед усіх вакансій країни і добірка вакансій з позначкою, який рівень англійської потрібен.</p>
     <div class="searchcard">
       <div class="cj-search-box" data-url="https://widget.careerjet.net/search-box/e0cbcda6c79d5604cc1bdcdc6a2f796d"></div>
       <p class="hint">Вводьте посаду англійською, наприклад <em>warehouse</em>, <em>kitchen porter</em>, <em>cleaner</em>, <em>care assistant</em>, і місто. Результати відкриються на сайті <a href="https://www.careerjet.ie" target="_blank" rel="noopener">Careerjet</a>.</p>
     </div>
-    <p class="hero-sub"><a href="#subscribe">Хочете отримувати підібрані вакансії на email? Підпишіться →</a></p>
   </div>
 </div>
 
@@ -212,54 +188,6 @@
     <div class="grid" id="digestList"></div>
     <button class="btn more" id="digestMore" type="button" hidden></button>
     <p class="hint">Джерело вакансій: <a href="https://europa.eu/eures" target="_blank" rel="noopener">EURES</a>, Європейська мережа служб зайнятості, куди потрапляють і вакансії державного порталу <a href="https://jobsireland.ie" target="_blank" rel="noopener">JobsIreland</a> (Intreo). Категорію, графство, рівень англійської та короткий опис українською визначає наш асистент автоматично, тому перед відгуком перевіряйте умови в оригінальному оголошенні.</p>
-  </div>
-</section>
-
-<section id="subscribe">
-  <div class="wrap">
-    <div class="card formcard">
-      <h2>Добірка вакансій на email</h2>
-      <p class="sub">Вкажіть, яку роботу шукаєте, і ми надсилатимемо вакансії саме за вашим запитом. Безкоштовно, відписатися можна будь-коли.</p>
-      <ol class="steps">
-        <li><b>Ви обираєте</b> місто, рівень англійської та напрямки роботи.</li>
-        <li><b>Асистент відбирає</b> свіжі вакансії, прибирає дублікати й сумнівні оголошення.</li>
-        <li><b>Ви отримуєте лист</b> з посиланнями на оригінальні оголошення і відгукуєтесь напряму.</li>
-      </ol>
-      <form id="subForm" novalidate>
-        <!-- пастка для ботів: людина це поле не бачить -->
-        <div style="position:absolute;left:-9999px" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
-        <div class="row">
-          <div><label for="email">Email</label><input id="email" type="email" name="email" required placeholder="you@example.com" autocomplete="email"></div>
-          <div><label for="county">Де шукаєте роботу</label>
-            <select id="county" name="county">
-              <option>Дублін</option><option>Корк</option><option>Голвей</option><option>Лімерик</option><option>Інше графство</option><option>Будь-де в Ірландії</option>
-            </select></div>
-          <div><label for="english">Ваш рівень англійської</label>
-            <select id="english" name="english">
-              <option>Початковий (A1–A2)</option><option>Середній (B1)</option><option>Вище середнього (B2)</option><option>Вільний (C1+)</option>
-            </select></div>
-        </div>
-        <label>Яка робота вас цікавить</label>
-        <div class="checks">
-          <label><input type="checkbox" name="interest" value="warehouse"> Склад і логістика</label>
-          <label><input type="checkbox" name="interest" value="kitchen"> Кухня та кейтеринг</label>
-          <label><input type="checkbox" name="interest" value="cleaning"> Прибирання</label>
-          <label><input type="checkbox" name="interest" value="care"> Догляд (care assistant)</label>
-          <label><input type="checkbox" name="interest" value="hairdresser"> Перукар / барбер / б'юті</label>
-          <label><input type="checkbox" name="interest" value="construction"> Будівництво</label>
-          <label><input type="checkbox" name="interest" value="driver"> Водій / кур'єр</label>
-          <label><input type="checkbox" name="interest" value="admin"> Адміністрування / офіс</label>
-          <label><input type="checkbox" name="interest" value="retail"> Магазини</label>
-          <label><input type="checkbox" name="interest" value="it"> IT / IT-підтримка</label>
-        </div>
-        <label class="consent" style="display:flex;gap:8px;align-items:flex-start;font-weight:400">
-          <input type="checkbox" name="consent" required style="margin-top:3px">
-          <span>Я погоджуюсь отримувати добірку вакансій на цей email. Ми використовуємо ваші дані лише для підбору й розсилки вакансій і нікому їх не передаємо. Відписатися можна будь-коли за посиланням у кожному листі.</span>
-        </label>
-        <button class="btn" type="submit">Підписатися</button>
-        <div id="formMsg" role="status"></div>
-      </form>
-    </div>
   </div>
 </section>
 
@@ -301,7 +229,7 @@
 <section id="about-en" class="en">
   <div class="wrap">
     <h2>About (English)</h2>
-    <p>UA Jobs Ireland is a non-commercial project that helps Ukrainians living in Ireland, including people under EU temporary protection, find work. Visitors can search all vacancies in Ireland (powered by Careerjet) and subscribe to an email digest of entry-level and mid-level vacancies (warehouse, catering, cleaning, care, hairdressing and beauty, construction, driving, admin, retail, IT support), matched to their county, English level and interests.</p>
+    <p>UA Jobs Ireland is a non-commercial project that helps Ukrainians living in Ireland, including people under EU temporary protection, find work. Visitors can search all vacancies in Ireland (powered by Careerjet) and browse a weekly digest of entry-level and mid-level vacancies (warehouse, catering, cleaning, care, construction, driving, admin, retail, IT support) that can be filtered by category, county and the level of English required.</p>
     <p>Vacancies for the digest are collected and pre-screened by our open-source assistant <a href="https://github.com/oleksandrdruchkov/oleksandrdruchkov.github.io#readme" target="_blank" rel="noopener">Job Hunter AI</a>, which marks the level of English each job requires. Every listing links back to its original source, and users apply directly with the employer or job board.</p>
   </div>
 </section>
@@ -312,74 +240,6 @@
   </div>
 </footer>
 
-<script>
-  // Підписка: через функцію ua_jobs_subscribe у Supabase. Публічний ключ не дає читати чи змінювати чужі дані:
-  // змінити налаштування можна лише за особистим посиланням (токеном), яке підписник отримує після підписки.
-  const SUPABASE_URL = 'https://npwqiyzmhjypfvrjssxi.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_WTU8US3Ntbb25UkiWG-p9A_IitkQ6UH';
-  const MANAGE_URL = new URL('manage.html', location.href).href.split('?')[0];
-
-  const form = document.getElementById('subForm');
-  const msg = document.getElementById('formMsg');
-  const show = (text, color) => { msg.style.color = color || ''; msg.textContent = text; };
-
-  function store(token) { try { localStorage.setItem('uaj_token', token); } catch (e) {} }
-  function stored() { try { return localStorage.getItem('uaj_token'); } catch (e) { return null; } }
-  function manageLink(token) { return MANAGE_URL + '?t=' + encodeURIComponent(token); }
-
-  // Якщо в цьому браузері вже є підписка — показуємо пункт меню «Мої налаштування»
-  (function () {
-    const t = stored(); const a = document.getElementById('navSettings');
-    if (t && a) { a.href = manageLink(t); a.hidden = false; }
-  })();
-
-  function showCreated(token) {
-    const link = manageLink(token);
-    msg.replaceChildren();
-    msg.style.color = '#1d7a46';
-    const p1 = document.createElement('p'); p1.style.margin = '0 0 10px';
-    p1.textContent = 'Дякуємо, ви підписані! Перша добірка прийде на ваш email, щойно буде готова.';
-    const box = document.createElement('div'); box.className = 'linkbox';
-    const p2 = document.createElement('p'); p2.style.margin = '0 0 8px'; p2.style.color = 'var(--ink)'; p2.style.fontWeight = '400';
-    p2.textContent = 'Ваше особисте посилання, щоб будь-коли змінити місто, рівень англійської й напрямки або відписатися. Збережіть його: воно також буде в кожному листі.';
-    const a = document.createElement('a'); a.href = link; a.textContent = 'Змінити налаштування підписки'; a.style.fontWeight = '600';
-    const copy = document.createElement('button'); copy.type = 'button'; copy.className = 'btn ghost small'; copy.textContent = 'Скопіювати посилання';
-    copy.onclick = async () => { try { await navigator.clipboard.writeText(link); copy.textContent = 'Скопійовано ✓'; } catch (e) { prompt('Скопіюйте посилання:', link); } };
-    const row = document.createElement('div'); row.className = 'linkrow'; row.append(a, copy);
-    box.append(p2, row); msg.append(p1, box);
-  }
-
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const btn = form.querySelector('button[type=submit]');
-    const data = new FormData(form);
-
-    if (data.get('website')) { form.reset(); show('Дякуємо, ви підписані!', '#1d7a46'); return; }
-
-    const email = (data.get('email') || '').trim();
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { show('Перевірте, будь ласка, email.', '#b42318'); return; }
-    if (!data.get('consent')) { show('Позначте, будь ласка, згоду на отримання добірки.', '#b42318'); return; }
-
-    btn.disabled = true; show('Надсилаємо…');
-    try {
-      const res = await fetch(SUPABASE_URL + '/rest/v1/rpc/ua_jobs_subscribe', {
-        method: 'POST',
-        headers: { 'apikey': SUPABASE_KEY, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ p_email: email, p_county: data.get('county'), p_english_level: data.get('english'),
-                               p_interests: data.getAll('interest'), p_consent: true })
-      });
-      const out = res.ok ? await res.json() : null;
-      if (out && out.status === 'created' && out.token) { form.reset(); store(out.token); showCreated(out.token); }
-      else if (out && out.status === 'exists') {
-        const t = stored();
-        if (t) { show('Цей email уже підписаний. Змінити налаштування можна в меню «Мої налаштування» вгорі сторінки.', '#1d7a46'); }
-        else { show('Цей email уже підписаний. Змінити налаштування можна за особистим посиланням, яке ви отримали після підписки (воно є і в кожному листі з добіркою).', '#1d7a46'); }
-      }
-      else { show('Щось пішло не так. Спробуйте пізніше.', '#b42318'); console.error('Supabase', res.status, out); }
-    } catch (err) { show('Немає з\'єднання. Спробуйте пізніше.', '#b42318'); }
-    btn.disabled = false;
-  });
-</script>
 
 <script>
   // Добірка: читаємо таблицю ua_jobs_vacancies (публічний ключ дозволяє лише читати свіжі опубліковані вакансії)
